@@ -1,0 +1,1 @@
+{"switch_ha": 16, "switch_alive": 24, "chosen_by": "best mean spellF1 over 7-fold leave-one-match-out CV on DFL (external data only); CV mean 0.698"}
