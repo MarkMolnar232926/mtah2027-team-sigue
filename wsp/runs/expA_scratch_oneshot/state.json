@@ -1,0 +1,10 @@
+{
+ "run": "expA_scratch_oneshot",
+ "passes": 0,
+ "model": "claude-fable-5-2",
+ "effort": "xhigh",
+ "turns_done": 1,
+ "history": [],
+ "complete": true,
+ "nonzero_weights": 396
+}

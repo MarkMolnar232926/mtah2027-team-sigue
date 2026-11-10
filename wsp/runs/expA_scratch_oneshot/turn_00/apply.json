@@ -1,0 +1,79 @@
+{
+ "found_block": true,
+ "statements": 140,
+ "applied": 140,
+ "errors": [],
+ "nonzero_weights": 396,
+ "tensors": {
+  "inp.0.weight": {
+   "size": 6144,
+   "nonzero": 42,
+   "max_abs": 20.0
+  },
+  "inp.0.bias": {
+   "size": 128,
+   "nonzero": 14,
+   "max_abs": 24.0
+  },
+  "conv.weight": {
+   "size": 147456,
+   "nonzero": 243,
+   "max_abs": 0.05555599927902222
+  },
+  "conv.bias": {
+   "size": 128,
+   "nonzero": 7,
+   "max_abs": 1.0
+  },
+  "head.0.weight": {
+   "size": 49152,
+   "nonzero": 36,
+   "max_abs": 2.0
+  },
+  "head.0.bias": {
+   "size": 128,
+   "nonzero": 2,
+   "max_abs": 2.4000000953674316
+  },
+  "head.2.weight": {
+   "size": 384,
+   "nonzero": 4,
+   "max_abs": 2.0
+  },
+  "head.2.bias": {
+   "size": 3,
+   "nonzero": 1,
+   "max_abs": 3.0
+  },
+  "gru.weight_ih_l0": {
+   "size": 49152,
+   "nonzero": 15,
+   "max_abs": 30.0
+  },
+  "gru.bias_ih_l0": {
+   "size": 384,
+   "nonzero": 7,
+   "max_abs": 9.0
+  },
+  "gru.weight_ih_l0_reverse": {
+   "size": 49152,
+   "nonzero": 7,
+   "max_abs": 20.0
+  },
+  "gru.bias_ih_l0_reverse": {
+   "size": 384,
+   "nonzero": 5,
+   "max_abs": 6.210000038146973
+  },
+  "gru.weight_ih_l1": {
+   "size": 98304,
+   "nonzero": 8,
+   "max_abs": 4.0
+  },
+  "gru.bias_ih_l1": {
+   "size": 384,
+   "nonzero": 5,
+   "max_abs": 20.0
+  }
+ }
+}

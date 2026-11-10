@@ -28,9 +28,10 @@ PROC = os.path.join(ROOT, "external", "processed")
 DFL_VAL, SC_VAL, MET_VAL = (5, 6), (15, 16, 17, 18, 19), (2,)
 
 
-def benchmark_halves():
+def benchmark_halves(dfl=DFL_VAL, sc=SC_VAL, met=MET_VAL):
+    """The held-out benchmark by default; other match indices give other splits (see wsp/)."""
     files = sorted(glob.glob(os.path.join(PROC, "DFL-MAT-*.npz")))
-    for mi in DFL_VAL:
+    for mi in dfl:
         z = np.load(files[mi])
         for h in (1, 2):
             y = controlled(raw_codes(z["h%d_status" % h], z["h%d_poss" % h]), 2.0)
@@ -39,9 +40,9 @@ def benchmark_halves():
                 b, hp, ap_ = degrade(z["h%d_ball" % h], z["h%d_home" % h], z["h%d_away" % h],
                                      z["h%d_status" % h], rng)
                 yield "DFL", b, hp, ap_, y
-    for k, h, b, hp, ap_, y in sc_halves(set(SC_VAL)):
+    for k, h, b, hp, ap_, y in sc_halves(set(sc)):
         yield "SC", b, hp, ap_, y
-    for k, h, b, hp, ap_, y in sc_halves(set(MET_VAL), "MET-*.npz"):
+    for k, h, b, hp, ap_, y in sc_halves(set(met), "MET-*.npz"):
         yield "MET", b, hp, ap_, y
 
 

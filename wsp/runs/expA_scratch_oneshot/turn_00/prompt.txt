@@ -1,0 +1,444 @@
+Your task is to write, from scratch, the weights of a neural network that labels ball possession in
+football matches from automatic tracking data. There is no training: no gradient descent, no data
+to fit, no code to run. You have no tools. You decide what every part of the network should compute
+and you write the numbers.
+
+This is a single attempt. You get no feedback and no second reply: the network your reply defines
+is evaluated as it stands.
+
+The network's architecture is fixed and described below; it has 698,115 weights and EVERY
+WEIGHT STARTS AT 0. You set the weights you need; the rest stay 0.
+
+Reply in this order: first describe your design briefly (which units compute what, and how the
+pieces produce the three outputs), then write the weights as one ```edits block in the language
+defined at the end. Only the edits block changes the network.
+
+
+THE PROBLEM
+
+A football match is recorded at 25 frames per second; a half is about 70,000 frames. For every
+frame the network must say one of three things:
+
+  H   the HOME team is in possession and the ball is in play
+  A   the AWAY team is in possession and the ball is in play
+  D   dead ball: the ball is not in play (out for a throw-in, corner or goal kick, after a foul,
+      after a goal, before kick-off), from the moment play stops until it restarts
+
+Possession rules:
+  - While the ball is in play, exactly one team is in possession. There is no "contested" or
+    "loose" state: when the ball is loose, in the air or being fought over, possession stays with
+    the team that last had it.
+  - Possession changes only when the other team gains CONTROLLED possession. A touch, a deflection
+    or a header that is not followed by control does not change possession. In the reference
+    labels, a spell of the other team shorter than 2 seconds in the middle of live play is not a
+    change of possession; it belongs to the team that had the ball before.
+  - After a dead ball there is always a clear possessor at the restart; the first possession after
+    a restart counts whatever its length.
+  - Who "owns" a dead ball is not asked. Dead is D.
+  - A possession is a maximal run of H or of A. `H H H A A` is two possessions; `H H D D H H` is
+    two possessions with a stoppage between them.
+  Typically the ball is in play 55-65% of the time and a half has roughly 100-150 possessions.
+
+What the tracking looks like. It is automatic and uncorrected:
+  - The ball is NOT SEEN on about 40% of frames, and it is lost in long stretches (many seconds),
+    not in flickers: precisely during duels, crowded phases, balls in the air and many dead balls.
+    A ball in the air is seen projected onto the grass, so its position can be metres off.
+  - Players have no identities. Each team is an unordered set of tracked positions; tracks appear
+    and vanish, a player can be missing or briefly duplicated, and positions are noisy.
+  - There is no ball height, no event data, no referee signal.
+
+The network does not see raw positions. It sees 48 numbers per frame, computed by the code
+below from the ball track and the two sets of player positions. This file is the reference
+implementation of the input; `frame_features(ball, home, away)` is called with kalman=False and
+nearest=False. Coordinates are metres with the pitch centre at the origin (pitch 105 x 68, so
+|x| <= 52.5 and |y| <= 34 inside the pitch). Before anything else the code flips the pitch so that
+the HOME team always attacks towards +x.
+
+```python
+"""Identity-free per-frame features from (ball, home players, away players).
+
+The same function runs on degraded DFL data (training) and on the competition ATD (inference), so
+the model never sees anything the ATD cannot give it: no player identities, no ball height, no
+event data. All coordinates are metres with the pitch centre at the origin, and x is flipped so
+that the HOME team attacks towards +x (direction estimated from the data itself, per half).
+"""
+
+import warnings
+
+import numpy as np
+
+from kalman import smooth_ball
+
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+FPS = 25
+HALF_L, HALF_W = 52.5, 34.0
+
+
+def home_attacks_positive(home, away):
+    """True if the home team's average x is below the away team's, i.e. home defends -x."""
+    hx = np.nanmean(home[..., 0])
+    ax = np.nanmean(away[..., 0])
+    return hx < ax
+
+
+def _ffill_idx(valid):
+    idx = np.where(valid, np.arange(len(valid)), -1)
+    return np.maximum.accumulate(idx)
+
+
+def _bfill_idx(valid):
+    n = len(valid)
+    idx = np.where(valid, np.arange(n), n)
+    return np.minimum.accumulate(idx[::-1])[::-1]
+
+
+def _speed(xy, lag=5):
+    """Speed in m/s from positions, central difference over +/- lag frames, NaN-aware."""
+    v = np.full(xy.shape[:-1], np.nan, np.float32)
+    d = xy[2 * lag:] - xy[:-2 * lag]
+    v[lag:-lag] = np.sqrt((d ** 2).sum(-1)) * FPS / (2 * lag)
+    return np.clip(v, 0, 40)
+
+
+def _velocity(xy, lag=3):
+    vel = np.full(xy.shape, np.nan, np.float32)
+    vel[lag:-lag] = (xy[2 * lag:] - xy[:-2 * lag]) * FPS / (2 * lag)
+    return vel
+
+
+def frame_features(ball, home, away, kalman=False, nearest=False):
+    """ball (T,2) metres, NaN where unseen; home (T,P,2), away (T,Q,2). Returns (T,F) float32.
+
+    kalman=True appends 7 features from a Kalman-smoothed ball track (N_FEATURES_K columns).
+    nearest=True appends, per team, the NEAREST_K players closest to the ball: position and velocity
+    relative to the ball, sorted by distance (N_FEATURES_P columns)."""
+    T = len(ball)
+    if not home_attacks_positive(home, away):
+        ball = ball * np.array([-1, -1], np.float32)
+        home = home * np.array([-1, -1], np.float32)
+        away = away * np.array([-1, -1], np.float32)
+
+    vis = np.isfinite(ball[:, 0])
+    f = _ffill_idx(vis)
+    b = _bfill_idx(vis)
+    t = np.arange(T)
+    since = np.where(f >= 0, t - f, 10 * FPS) / FPS
+    until = np.where(b < T, b - t, 10 * FPS) / FPS
+    last = np.where(f[:, None] >= 0, ball[np.clip(f, 0, T - 1)], 0.0)
+    nxt = np.where(b[:, None] < T, ball[np.clip(b, 0, T - 1)], 0.0)
+    # linear interpolation across gaps, constant at the ends
+    w = np.where((f >= 0) & (b < T), since / np.maximum(since + until, 1e-6), 0.0)[:, None]
+    interp = np.where(vis[:, None], ball,
+                      np.where((f >= 0)[:, None] & (b < T)[:, None], last * (1 - w) + nxt * w,
+                               np.where((f >= 0)[:, None], last, nxt)))
+    interp = np.nan_to_num(interp)
+
+    bvel = _velocity(ball)
+    bspeed = np.sqrt((bvel ** 2).sum(-1))
+    bspeed = np.nan_to_num(np.clip(bspeed, 0, 40))
+    bacc = np.zeros(T, np.float32)
+    acc = np.sqrt(((bvel[2:] - bvel[:-2]) ** 2).sum(-1)) * FPS / 2
+    bacc[1:-1] = np.nan_to_num(np.clip(acc, 0, 400))
+
+    if kalman:
+        kpos, kvel, kstd = smooth_ball(ball)
+        kspd = np.clip(np.sqrt((kvel ** 2).sum(-1)), 0, 40)
+        kacc = np.zeros(T, np.float32)
+        kacc[1:-1] = np.clip(np.sqrt(((kvel[2:] - kvel[:-2]) ** 2).sum(-1)) * FPS / 2, 0, 400)
+
+    cols = [
+        vis.astype(np.float32),
+        np.where(vis, ball[:, 0], 0) / HALF_L,
+        np.where(vis, ball[:, 1], 0) / HALF_W,
+        bspeed / 10, np.log1p(bacc) / 5,
+        np.minimum(since, 10) / 10, np.minimum(until, 10) / 10,
+        interp[:, 0] / HALF_L, interp[:, 1] / HALF_W,
+        (np.abs(interp[:, 0]) > HALF_L).astype(np.float32),
+        (np.abs(interp[:, 1]) > HALF_W).astype(np.float32),
+        (HALF_L - np.abs(interp[:, 0])) / 10, (HALF_W - np.abs(interp[:, 1])) / 10,
+    ]
+
+    dmins, krel, near_cols = [], [], []
+    for side, P in ((1, home), (-1, away)):
+        n_seen = np.isfinite(P[..., 0]).sum(1)
+        spd = _speed(P)
+        vel = _velocity(P)
+        d = np.sqrt(((P - interp[:, None, :]) ** 2).sum(-1))
+        d = np.where(np.isfinite(d), d, 99.0)
+        order = np.argsort(d, axis=1)
+        ds = np.take_along_axis(d, order, 1)
+        d1 = np.minimum(ds[:, 0], 40)
+        d2 = np.minimum(ds[:, 1], 40) if ds.shape[1] > 1 else d1
+        dmins.append(d1)
+        near = order[:, 0]
+        nvel = vel[t, near]
+        rel = np.sqrt(((nvel - np.nan_to_num(bvel)) ** 2).sum(-1))
+        rel = np.where(vis & np.isfinite(rel), np.minimum(rel, 30), 30.0)
+        nspd = np.nan_to_num(spd[t, near], nan=0.0)
+        if nearest:
+            ball_v = np.nan_to_num(bvel)
+            for j in range(NEAREST_K):
+                if j < P.shape[1]:
+                    idx = order[:, j]
+                    ok = ds[:, j] < 98
+                    rp = P[t, idx] - interp
+                    rv = np.nan_to_num(vel[t, idx]) - ball_v
+                else:
+                    ok = np.zeros(T, bool)
+                    rp = rv = np.zeros((T, 2), np.float32)
+                near_cols += [ok.astype(np.float32),
+                              np.where(ok, np.clip(rp[:, 0] / 10, -4, 4), 0),
+                              np.where(ok, np.clip(rp[:, 1] / 10, -4, 4), 0),
+                              np.where(ok, np.clip(rv[:, 0] / 10, -3, 3), 0),
+                              np.where(ok, np.clip(rv[:, 1] / 10, -3, 3), 0)]
+        if kalman:
+            krel.append(np.minimum(np.nan_to_num(
+                np.sqrt(((nvel - kvel) ** 2).sum(-1)), nan=30.0), 30) / 10)
+        with np.errstate(all="ignore"):
+            cx = np.nanmean(P[..., 0], 1)
+            cy = np.nanmean(P[..., 1], 1)
+            sx = np.nanstd(P[..., 0], 1)
+            sy = np.nanstd(P[..., 1], 1)
+            mx = np.nanmax(P[..., 0] * side, 1)  # most advanced player in attacking direction
+            mn = np.nanmin(P[..., 0] * side, 1)
+            msp = np.nanmean(spd, 1)
+            slow = np.nanmean(np.where(np.isfinite(spd), spd < 1.0, np.nan), 1)
+            fast = np.nanmax(spd, 1)
+        cols += [
+            d1 / 10, d2 / 10,
+            (d < 2).sum(1).astype(np.float32), (d < 5).sum(1).astype(np.float32) / 3,
+            (d < 10).sum(1).astype(np.float32) / 5,
+            rel / 10, nspd / 5,
+            n_seen.astype(np.float32) / 11,
+            np.nan_to_num(cx) / HALF_L, np.nan_to_num(cy) / HALF_W,
+            np.nan_to_num(sx) / 20, np.nan_to_num(sy) / 15,
+            np.nan_to_num(mx) / HALF_L, np.nan_to_num(mn) / HALF_L,
+            np.nan_to_num(msp) / 3, np.nan_to_num(slow), np.nan_to_num(fast) / 8,
+        ]
+    cols.append((dmins[0] - dmins[1]) / 10)
+    cols += near_cols
+    if kalman:
+        cols += [np.clip(kpos[:, 0] / HALF_L, -1.5, 1.5), np.clip(kpos[:, 1] / HALF_W, -1.5, 1.5),
+                 kspd / 10, np.log1p(kacc) / 5, np.minimum(kstd, 20) / 10] + krel
+    X = np.stack(cols, 1).astype(np.float32)
+    return np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
+
+
+N_FEATURES = 13 + 2 * 17 + 1
+N_FEATURES_K = N_FEATURES + 7
+NEAREST_K = 4
+N_FEATURES_P = N_FEATURES + 2 * NEAREST_K * 5
+```
+
+
+THE INPUT
+
+x[t] is a vector of 48 numbers for frame t. "Ball" in features 7-12 and in all distances means
+the ball position with gaps filled by straight-line interpolation between the last and the next
+sighting (constant before the first / after the last sighting).
+
+  idx  name         definition                                                         range
+  ---  -----------  -----------------------------------------------------------------  ----------
+    0  seen         1 if the tracking saw the ball on this frame, else 0                0 / 1
+    1  ball_x       ball x / 52.5 if seen, else 0. +x is where HOME attacks            ~[-1, 1]
+    2  ball_y       ball y / 34 if seen, else 0                                        ~[-1, 1]
+    3  ball_speed   ball speed (m/s) / 10, from sightings 3 frames either side;        [0, 4]
+                    0 if either sighting is missing
+    4  ball_acc     ln(1 + ball acceleration in m/s^2) / 5; 0 if not computable        [0, 1.2]
+    5  since        seconds since the ball was last seen, capped at 10, / 10.          [0, 1]
+                    0 when seen now; 1 if it has not been seen for 10 s or ever
+    6  until        seconds until the ball is next seen, capped at 10, / 10            [0, 1]
+    7  ballI_x      interpolated ball x / 52.5 (equals feature 1 when seen)            ~[-1, 1]
+    8  ballI_y      interpolated ball y / 34                                           ~[-1, 1]
+    9  out_x        1 if |interpolated ball x| > 52.5 (beyond a goal line)             0 / 1
+   10  out_y        1 if |interpolated ball y| > 34 (beyond a touchline)               0 / 1
+   11  to_goalline  (52.5 - |interpolated ball x|) / 10; negative when beyond          <= 5.25
+   12  to_touchline (34 - |interpolated ball y|) / 10; negative when beyond            <= 3.4
+
+Then one block of 17 features per team: HOME at 13..29, AWAY at 30..46. With k the offset in the
+block (HOME index = 13 + k, AWAY index = 30 + k):
+
+    k  name         definition                                                         range
+  ---  -----------  -----------------------------------------------------------------  ----------
+    0  d1           distance (m) from the ball to the team's nearest player,           [0, 4]
+                    capped at 40, / 10
+    1  d2           same for the second-nearest player                                 [0, 4]
+    2  n2           number of the team's players within 2 m of the ball (raw count)    0, 1, 2..
+    3  n5           number within 5 m, / 3                                             0, 1/3, ..
+    4  n10          number within 10 m, / 5                                            0, 0.2, ..
+    5  relv         |velocity of the nearest player - velocity of the ball| in m/s,    [0, 3]
+                    capped at 30, / 10. It is 3.0 WHENEVER THE BALL IS NOT SEEN on
+                    this frame (or a velocity is unavailable). Small = moving together
+    6  near_speed   speed (m/s) of the nearest player / 5                              [0, 8]
+    7  n_seen       number of the team's tracked players / 11                          ~1
+    8  cx           team centroid x / 52.5                                             ~[-1, 1]
+    9  cy           team centroid y / 34                                               ~[-1, 1]
+   10  sx           standard deviation of the players' x / 20                          >= 0
+   11  sy           standard deviation of the players' y / 15                          >= 0
+   12  front        the team's most advanced player in its own attacking direction:    ~[-1, 1]
+                    max(x * side) / 52.5 with side = +1 for HOME, -1 for AWAY
+   13  back         the team's deepest player: min(x * side) / 52.5                    ~[-1, 1]
+   14  mean_speed   mean speed of the team's players (m/s) / 3                         >= 0
+   15  slow         share of the team's players moving slower than 1 m/s               [0, 1]
+   16  top_speed    speed of the team's fastest player (m/s) / 8                       [0, 5]
+
+   47  d1_diff      (HOME d1 - AWAY d1) in the units above, i.e. metres / 10.          [-4, 4]
+                    Negative = a HOME player is closer to the ball
+
+Examples: x[t][0] is `seen`; x[t][13] is HOME d1; x[t][30] is AWAY d1; x[t][18] is HOME relv;
+x[t][35] is AWAY relv; x[t][28] is HOME slow; x[t][45] is AWAY slow; x[t][47] is d1_diff.
+A HOME player standing 1.5 m from a visible ball while the nearest AWAY player is 6 m away gives
+x[13] = 0.15, x[30] = 0.6, x[15] = 1, x[32] = 0, x[47] = -0.45.
+
+
+THE OUTPUT
+
+Three logits per frame, in the order (H, A, D). They are used as follows, and you should set the
+scale of your logits with this in mind:
+
+  1. log-softmax over the three logits gives per-frame log-probabilities.
+  2. The network is run on four physically equivalent views of the same half and the four
+     probability vectors are averaged: the original; the pitch mirrored across its long axis
+     (every y changes sign); the two teams' roles exchanged (the AWAY team is presented as HOME,
+     the pitch is flipped again so that this new home attacks +x, and the H and A outputs are
+     exchanged back afterwards); and both at once.
+  3. Probabilities are clipped to [1e-6, 1], so a per-frame log-probability lies in [-13.8, 0].
+  4. A Viterbi decoder picks the label sequence that maximises the sum over frames of the
+     log-probability of the chosen label, minus a penalty for every change of label between
+     consecutive frames: 16 for H <-> A, and 24 for any change between alive (H or A) and D.
+     So a new state is entered only when the accumulated evidence for it over the frames it lasts
+     outweighs the penalties for entering and leaving it. With everything at 0 the decoder outputs
+     a constant.
+
+Each half is processed in overlapping windows of 6,000 frames (4 minutes): the recurrent state
+starts at 0 at the start of every window and only the central 4,000 frames of a window are kept,
+so every kept frame has at least 1,000 frames (40 s) of context on each side, except at the very
+start and end of a half.
+
+
+THE NETWORK
+
+The architecture is that of a network we trained with gradient descent for this task; yours has
+the same shape and is run by the same code. Input x[t] has 48 entries; every hidden layer has
+128 units; T is the number of frames in a window. All vectors below are per frame t.
+
+  a    = GELU(inp.W @ x + inp.b)                               128   GELU(v) = v * Phi(v)
+  c[u] = conv.b[u] + sum over i in 0..127, k in 0..8 of
+           conv.W[u, i, k] * a[t + k - 4][i]                    128   a is 0 outside the window
+  h    = a + relu(c)                                           128
+
+  Layer-1 GRU, forward direction "gru1f": state s, s = 0 before the first frame of the window,
+  frames visited in increasing t. With sigma the logistic function and * elementwise:
+      r = sigma(Wir @ h + bir + Whr @ s_prev + bhr)
+      z = sigma(Wiz @ h + biz + Whz @ s_prev + bhz)
+      n = tanh (Win @ h + bin + r * (Whn @ s_prev + bhn))
+      s = (1 - z) * n + z * s_prev                              128
+  "gru1b" has its own weights and the same equations, but visits frames in DECREASING t (its state
+  at t summarises frames t, t+1, ..., and is 0 after the last frame of the window).
+  g1 = concat(s of gru1f at t, s of gru1b at t)                 256
+
+  Layer-2 GRU: "gru2f" (increasing t) and "gru2b" (decreasing t), same equations, input g1 instead
+  of h. Their Wir, Wiz, Win are 128 x 256: columns 0..127 read gru1f, columns 128..255 read gru1b.
+  qf = state of gru2f at t, qb = state of gru2b at t           128 each
+
+  m      = GELU(head1.Wf @ qf + head1.Wb @ qb + head1.Wh @ h + head1.b)     128
+  logits = head2.W @ m + head2.b                                 3   order (H, A, D)
+
+Conventions. Every matrix is indexed [unit, input]: row u holds the weights INTO unit u of the
+layer being computed, column i reads input i. conv.W[u, i, k] is the weight into unit u from unit i
+of `a` at time offset k - 4 (k = 0 is 4 frames in the past, k = 4 is the current frame, k = 8 is
+4 frames in the future). Note that z is the gate that KEEPS the old state: z near 1 holds s, z near
+0 replaces it by n. GELU(v) is about v for large positive v, about 0 for large negative v, and
+GELU(0) = 0. With every weight at 0 all activations and all logits are 0.
+
+The tensors you can set, with their shapes:
+
+  inp.W      128 x 48       weights into `a` from the 48 inputs
+  inp.b      128            bias of `a`
+  conv.W     128 x 128 x 9  [unit, unit of a, time offset k]
+  conv.b     128            bias of c
+  gru1f.Wir  128 x 128      reset gate, from h
+  gru1f.Wiz  128 x 128      update gate, from h
+  gru1f.Win  128 x 128      candidate, from h
+  gru1f.Whr  128 x 128      reset gate, from the previous state
+  gru1f.Whz  128 x 128      update gate, from the previous state
+  gru1f.Whn  128 x 128      candidate, from the previous state
+  gru1f.bir  .biz  .bin  .bhr  .bhz  .bhn   the six biases (gru1f.bir, gru1f.biz, ...), 128 each
+  gru1b.Wir  128 x 128      reset gate, from h
+  gru1b.Wiz  128 x 128      update gate, from h
+  gru1b.Win  128 x 128      candidate, from h
+  gru1b.Whr  128 x 128      reset gate, from the previous state
+  gru1b.Whz  128 x 128      update gate, from the previous state
+  gru1b.Whn  128 x 128      candidate, from the previous state
+  gru1b.bir  .biz  .bin  .bhr  .bhz  .bhn   the six biases (gru1b.bir, gru1b.biz, ...), 128 each
+  gru2f.Wir  128 x 256      reset gate, from g1
+  gru2f.Wiz  128 x 256      update gate, from g1
+  gru2f.Win  128 x 256      candidate, from g1
+  gru2f.Whr  128 x 128      reset gate, from the previous state
+  gru2f.Whz  128 x 128      update gate, from the previous state
+  gru2f.Whn  128 x 128      candidate, from the previous state
+  gru2f.bir  .biz  .bin  .bhr  .bhz  .bhn   the six biases (gru2f.bir, gru2f.biz, ...), 128 each
+  gru2b.Wir  128 x 256      reset gate, from g1
+  gru2b.Wiz  128 x 256      update gate, from g1
+  gru2b.Win  128 x 256      candidate, from g1
+  gru2b.Whr  128 x 128      reset gate, from the previous state
+  gru2b.Whz  128 x 128      update gate, from the previous state
+  gru2b.Whn  128 x 128      candidate, from the previous state
+  gru2b.bir  .biz  .bin  .bhr  .bhz  .bhn   the six biases (gru2b.bir, gru2b.biz, ...), 128 each
+  head1.Wf   128 x 128      weights into m from qf (gru2f)
+  head1.Wb   128 x 128      weights into m from qb (gru2b)
+  head1.Wh   128 x 128      weights into m from h
+  head1.b    128            bias of m
+  head2.W    3 x 128        weights into the logits (row 0 = H, 1 = A, 2 = D) from m
+  head2.b    3              bias of the logits
+
+698,115 weights in total. EVERY WEIGHT STARTS AT 0.
+
+
+SCORING
+
+The network is evaluated on held-out professional matches from three different tracking sources:
+broadcast-grade optical tracking that has been degraded to look automatic (ball hidden on 25-55% of
+frames in long gaps, position noise, fragmented player tracks); automatic tracking from broadcast
+video (10 Hz, resampled to 25); and automatic tracking with real ball gaps on 30-50% of frames.
+For each half the decoded label sequence is compared with reference labels.
+
+  spellF1 (the main score). Every possession (maximal run of H or of A) is one object. Predicted
+  possessions are matched one-to-one to true ones by temporal intersection-over-union, and the F1
+  of the matching is averaged over IoU thresholds 0.3, 0.4, 0.5, 0.6, 0.7. A constant output
+  scores 0. Splitting one true possession into two, merging two into one, or starting one a second
+  late all cost; a possession found one second late everywhere scores about 0.65.
+
+  macroF1 (reported beside it). The unweighted mean of the per-frame F1 of H, A and D.
+
+Your network is compared with the same architecture trained by gradient descent on about 2.8
+million labelled frames, and with a simple baseline that gives the ball to the team of the nearest
+player and smooths over 4 seconds.
+
+
+HOW TO WRITE THE WEIGHTS
+
+End your reply with one fenced block that opens with ```edits and closes with ```. One statement
+per line:
+
+    inp.W[3, 47] = -2.5                  # one weight: into unit 3 of `a`, from input 47
+    inp.b[3] = 0.5                       # one bias
+    inp.W[4, 13:16] = [1.0, 0.5, -2]     # a list fills a range, left to right
+    conv.W[10, 3, :] = 0.111             # a single number fills the whole range
+    conv.W[11, 3, 0:9:2] = 0.2           # ranges are a:b (b excluded), a:b:s, or : for a whole axis
+    head2.W[0:2, 5:7] = [[1, -1],        # a 2-D list fills a block; a long list may continue
+                         [-1, 1]]        #   over the following lines
+    gru1f.bhz[0:8] += 2                  # in place: +=  -=  *=
+
+Rules:
+  - The names are exactly those of the tensor table above. Indices are plain integers (negative
+    integers count from the end), no arithmetic and no variables.
+  - A value is a decimal number or a list of them; assignment follows numpy rules, so a list must
+    match the range it fills and a single number fills any range.
+  - Every weight must satisfy |w| <= 1e6.
+  - Statements apply in order; a later one overwrites an earlier one. `#` starts a comment.
+  - Only the LAST edits block in your reply is read.
+  - A statement that cannot be read is skipped and the others still apply.
+
+Now describe your design, then write the edits block.
