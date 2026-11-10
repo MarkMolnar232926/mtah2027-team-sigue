@@ -104,3 +104,21 @@ recall about 0.70). On Metrica its D precision is only 0.67: it reads long ball 
 
 **Usage note.** The reply cost about four times the output tokens I had estimated. Asked how to
 budget B and C, the team chose to run C next, at effort `high`.
+
+## Nov 10 — the hand-written network on the provided match (pipeline check)
+
+The point of sharing the trained model's checkpoint format is that nothing else has to change:
+
+```
+python solution/predict.py --models wsp/networks/expA_scratch_oneshot/hand.pt --tta --out submission/Sigue_wsp_A.csv
+python evaluation/validate_submission.py submission/Sigue_wsp_A.csv      ->  Valid, 199,319 rows
+```
+
+The file reports 261 possessions of mean 11.3 s. On the public 5 minutes it scores spellF1 0.339 /
+macroF1 0.654 (the four shipped baselines: 0.038 to 0.424 / 0.58 to 0.62). As everywhere in this
+repository, that window has 17 possessions and is used to check that the pipeline is wired
+correctly — frames aligned, labels meaning what they should — and for nothing else. No prompt, no
+feedback and no decision in this work uses the provided match.
+
+The zero network (every weight 0) scores spellF1 0.000 on all three benchmark sources, as it must:
+the decoder outputs a constant.
