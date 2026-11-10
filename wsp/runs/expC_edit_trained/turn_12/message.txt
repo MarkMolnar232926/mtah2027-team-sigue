@@ -1,0 +1,19 @@
+OUTPUT of your block (ran 194 s). Forward passes used: 5 of 25. Replies left: 28.
+----
+dfl0 sim vs stored (orig view, interior): h maxdiff 0.0000  logits maxdiff 0.2875  mean abs 0.00595
+    single view: {'spell_f1': 0.6651162790697673, 'macro_f1': 0.9034990589747283, 'n_gt_spells': 46, 'n_pred_spells': 40}  acc 0.9123
+    four views : {'spell_f1': 0.6870588235294117, 'macro_f1': 0.9034545150241932, 'n_gt_spells': 46, 'n_pred_spells': 39}  acc 0.9123
+    per-view team acc [0.903 0.909 0.889 0.889]  unanimous frac 0.929
+dfl2 sim vs stored (orig view, interior): h maxdiff 0.0000  logits maxdiff 1.3112  mean abs 0.05828
+    single view: {'spell_f1': 0.6594594594594595, 'macro_f1': 0.880677766144219, 'n_gt_spells': 44, 'n_pred_spells': 30}  acc 0.9163
+    four views : {'spell_f1': 0.6880000000000001, 'macro_f1': 0.8818183105353121, 'n_gt_spells': 44, 'n_pred_spells': 31}  acc 0.9166
+    per-view team acc [0.883 0.875 0.892 0.889]  unanimous frac 0.909
+sc8 sim vs stored (orig view, interior): h maxdiff 0.0000  logits maxdiff 0.8922  mean abs 0.01441
+    single view: {'spell_f1': 0.9411764705882353, 'macro_f1': 0.975438283393571, 'n_gt_spells': 35, 'n_pred_spells': 33}  acc 0.9817
+    four views : {'spell_f1': 0.881159420289855, 'macro_f1': 0.967672074136484, 'n_gt_spells': 35, 'n_pred_spells': 34}  acc 0.9766
+    per-view team acc [0.975 0.968 0.943 0.946]  unanimous frac 0.944
+met10 sim vs stored (orig view, interior): h maxdiff 0.0000  logits maxdiff 0.0646  mean abs 0.00092
+    single view: {'spell_f1': 0.9666666666666668, 'macro_f1': 0.9936558352058857, 'n_gt_spells': 41, 'n_pred_spells': 43}  acc 0.9955
+    four views : {'spell_f1': 1.0, 'macro_f1': 0.9962805495059301, 'n_gt_spells': 41, 'n_pred_spells': 41}  acc 0.9973
+    per-view team acc [0.991 0.99  0.995 0.995]  unanimous frac 0.990
+----

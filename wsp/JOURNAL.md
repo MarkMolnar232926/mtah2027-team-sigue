@@ -122,3 +122,34 @@ feedback and no decision in this work uses the provided match.
 
 The zero network (every weight 0) scores spellF1 0.000 on all three benchmark sources, as it must:
 the decoder outputs a constant.
+
+## Nov 10 — pipeline check, and experiment C paused
+
+**Pipeline check passed.** The trained 3-model ensemble (`models/expB_bw3met6k_s{0,1,2}.pt`) scores
+0.741 / 0.747 / 0.855 spellF1 on this machine: the numbers published in `docs/TECHNICAL.md`.
+
+**Experiment C is PAUSED, not finished.** `wsp/runs/expC_edit_trained/` holds 15 turns (0-14) and
+`tool_calls.jsonl`; 14 of 25 forward passes are used; **no weight has been changed yet**. The run
+stopped because the account's usage limit was reached, not because of an error in the experiment.
+All 15 turns were analysis. What the model had established:
+
+- the trained network's logits are very sharp, so the decoder changes little; the network itself
+  fixes the possession structure;
+- both layer-2 GRU directions carry the team decision redundantly; the direct `h` path into the
+  head hardly matters for it;
+- on the DFL practice halves it finds 236 possessions against 273 true (under-splitting), and at
+  true turnovers the median margin for the new team stays under 2 logits for 2 s, against 5 to 7
+  at restarts: turnovers are where it is unsure;
+- the SkillCorner and Metrica practice halves are largely memorised (0.93 and 1.0), because they
+  were training matches, so only DFL is informative. A cleaner dev split is the first thing to fix.
+
+Resume with the same command (finished turns are not re-sent; the kernel's variables are lost,
+its pass count and weights are kept):
+
+    python wsp/harness/run_edit.py --run expC_edit_trained --base models/expB_bw3met6k_s0.pt --budget 25 --max-turns 40 --block-minutes 30 --effort high
+
+Harness friction seen in C: the code guard refused two harmless blocks (`_` as a loop variable,
+`import time`).
+
+**Not done:** experiment B (not started), C's edit and its benchmark score, `wsp/README.md`,
+`wsp/REPORT.md`.

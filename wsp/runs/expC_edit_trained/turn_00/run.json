@@ -1,0 +1,30 @@
+{
+  "model": "claude-fable-5-2",
+  "effort": "high",
+  "cli": "claude -p --model claude-fable-5-2 --effort high --tools \"\" --strict-mcp-config --safe-mode --disable-slash-commands --system-prompt <instructions.md> --output-format stream-json --verbose",
+  "cli_version": "2.1.322",
+  "system_prompt": "You are a helpful assistant.",
+  "resumed": false,
+  "exit_code": 0,
+  "wall_seconds": 5.4,
+  "stop_reason": "end_turn",
+  "is_error": false,
+  "num_turns": 1,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 12051,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 290,
+    "thinking_tokens": 88
+  },
+  "reasoning_text_exposed": false,
+  "prompt_chars": 28657,
+  "answer_chars": 462,
+  "audit": {
+    "tools_available": [],
+    "mcp_servers": [],
+    "tool_calls_in_reply": [],
+    "tool_free": true
+  },
+  "truncated": false
+}

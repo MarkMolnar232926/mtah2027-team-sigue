@@ -1,0 +1,24 @@
+OUTPUT of your block (ran 210 s). Forward passes used: 5 of 25. Replies left: 37.
+----
+dfl0 {'spell_f1': 0.6189473684210526, 'macro_f1': 0.8826804883351578, 'n_gt_spells': 51, 'n_pred_spells': 44}
+   argmax acc 0.893125 decoded acc 0.892625
+   conf [[4497, 746, 436], [865, 8830, 278], [76, 176, 8096]]
+   gt spells by length (lo,hi,n,missed): [(0, 2, 4, 2), (2, 5, 17, 4), (5, 10, 14, 3), (10, 30, 11, 1), (30, 1000000000.0, 5, 0)]
+   mean max prob 0.9468456506729126  mean logp of true -0.32402661442756653  median |H-A| logit gap on live frames 5.8742170333862305
+dfl2 {'spell_f1': 0.6684210526315789, 'macro_f1': 0.8828589823130585, 'n_gt_spells': 45, 'n_pred_spells': 31}
+   argmax acc 0.92175 decoded acc 0.9227916666666667
+   conf [[4914, 538, 145], [514, 3020, 144], [208, 304, 14213]]
+   gt spells by length (lo,hi,n,missed): [(0, 2, 6, 5), (2, 5, 10, 5), (5, 10, 15, 3), (10, 30, 13, 0), (30, 1000000000.0, 1, 0)]
+   mean max prob 0.9377176761627197  mean logp of true -0.21984367072582245  median |H-A| logit gap on live frames 5.175942420959473
+sc8 {'spell_f1': 0.9565217391304348, 'macro_f1': 0.9770471327419891, 'n_gt_spells': 36, 'n_pred_spells': 33}
+   argmax acc 0.9799166666666667 decoded acc 0.983875
+   conf [[5747, 160, 16], [49, 4028, 76], [25, 61, 13838]]
+   gt spells by length (lo,hi,n,missed): [(0, 2, 3, 2), (2, 5, 7, 1), (5, 10, 11, 0), (10, 30, 14, 0), (30, 1000000000.0, 1, 0)]
+   mean max prob 0.9733532071113586  mean logp of true -0.05354348197579384  median |H-A| logit gap on live frames 9.671157836914062
+met10 {'spell_f1': 0.9702127659574469, 'macro_f1': 0.9934344559110729, 'n_gt_spells': 46, 'n_pred_spells': 48}
+   argmax acc 0.994375 decoded acc 0.9950833333333333
+   conf [[4333, 60, 1], [45, 8874, 1], [8, 3, 10675]]
+   gt spells by length (lo,hi,n,missed): [(0, 2, 1, 0), (2, 5, 17, 0), (5, 10, 12, 0), (10, 30, 13, 0), (30, 1000000000.0, 3, 0)]
+   mean max prob 0.9946135878562927  mean logp of true -0.012820540927350521  median |H-A| logit gap on live frames 11.735803604125977
+20
+----

@@ -1,0 +1,8 @@
+OUTPUT of your block (ran 279 s). Forward passes used: 14 of 25. Replies left: 26.
+----
+BASE                   views 0123      | DFL sF1 0.7053 mF1 0.9014 n 236/273 acc 0.9181 | SC sF1 0.9246 mF1 0.9740 n 178/185 acc 0.9781 | MET sF1 1.0000 mF1 0.9969 n  77/ 77 acc 0.9975
+BASE                   views 01        | DFL sF1 0.6936 mF1 0.8973 n 245/273 acc 0.9133 | SC sF1 0.9077 mF1 0.9703 n 180/185 acc 0.9745 | MET sF1 0.9833 mF1 0.9947 n  79/ 77 acc 0.9958
+BASE                   views 23        | DFL sF1 0.6873 mF1 0.8936 n 247/273 acc 0.9116 | SC sF1 0.8909 mF1 0.9667 n 187/185 acc 0.9726 | MET sF1 1.0000 mF1 0.9965 n  77/ 77 acc 0.9973
+BASE                   views 0         | DFL sF1 0.6812 mF1 0.8952 n 242/273 acc 0.9115 | SC sF1 0.9099 mF1 0.9709 n 180/185 acc 0.9751 | MET sF1 0.9833 mF1 0.9950 n  79/ 77 acc 0.9961
+per-chunk 4-view spellF1: {'dfl0': 0.687, 'dfl2': 0.688, 'dfl1a': 0.733, 'dfl0b': 0.756, 'dfl3a': 0.742, 'dfl3b': 0.626, 'sc8': 0.881, 'sc4': 0.929, 'sc5': 0.949, 'sc6': 0.965, 'sc9': 0.899, 'met10': 1.0, 'met11': 1.0}
+----

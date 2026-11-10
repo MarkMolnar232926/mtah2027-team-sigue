@@ -1,0 +1,37 @@
+OUTPUT of your block (ran 48 s). Forward passes used: 5 of 25. Replies left: 35.
+----
+dfl0 max abs diff vs stored logits 7.178700863974541e-06
+dfl2 max abs diff vs stored logits 4.964799197537673e-06
+sc8 max abs diff vs stored logits 4.467468018631848e-06
+met10 max abs diff vs stored logits 6.898940755561966e-06
+
+mean-ablation of paths (single view). cols: argmax acc | decoded acc | spellF1 | n_pred | team-acc on live frames (argmax H vs A)
+  dfl0   full     0.893 | 0.893 | 0.619 |  44 (gt 51) | 0.887
+  dfl0   no qf    0.852 | 0.864 | 0.555 |  42 (gt 51) | 0.840
+  dfl0   no qb    0.866 | 0.869 | 0.544 |  49 (gt 51) | 0.858
+  dfl0   no h     0.896 | 0.889 | 0.551 |  39 (gt 51) | 0.893
+  dfl0   only qf  0.875 | 0.873 | 0.567 |  47 (gt 51) | 0.872
+  dfl0   only qb  0.863 | 0.872 | 0.553 |  35 (gt 51) | 0.856
+  dfl0   only h   0.442 | 0.442 | 0.000 |   4 (gt 51) | 0.636
+  dfl2   full     0.922 | 0.923 | 0.668 |  31 (gt 45) | 0.884
+  dfl2   no qf    0.868 | 0.868 | 0.483 |  32 (gt 45) | 0.819
+  dfl2   no qb    0.903 | 0.905 | 0.620 |  35 (gt 45) | 0.893
+  dfl2   no h     0.918 | 0.920 | 0.646 |  33 (gt 45) | 0.874
+  dfl2   only qf  0.892 | 0.890 | 0.584 |  31 (gt 45) | 0.877
+  dfl2   only qb  0.871 | 0.870 | 0.488 |  32 (gt 45) | 0.807
+  dfl2   only h   0.614 | 0.614 | 0.000 |   0 (gt 45) | 0.603
+  sc8    full     0.980 | 0.984 | 0.957 |  33 (gt 36) | 0.977
+  sc8    no qf    0.948 | 0.956 | 0.800 |  29 (gt 36) | 0.937
+  sc8    no qb    0.851 | 0.871 | 0.563 |  40 (gt 36) | 0.907
+  sc8    no h     0.976 | 0.976 | 0.930 |  35 (gt 36) | 0.975
+  sc8    only qf  0.881 | 0.896 | 0.690 |  37 (gt 36) | 0.917
+  sc8    only qb  0.953 | 0.958 | 0.818 |  29 (gt 36) | 0.936
+  sc8    only h   0.580 | 0.580 | 0.000 |   0 (gt 36) | 0.588
+  met10  full     0.994 | 0.995 | 0.970 |  48 (gt 46) | 0.991
+  met10  no qf    0.957 | 0.956 | 0.818 |  42 (gt 46) | 0.938
+  met10  no qb    0.985 | 0.987 | 0.966 |  48 (gt 46) | 0.985
+  met10  no h     0.993 | 0.994 | 0.983 |  46 (gt 46) | 0.989
+  met10  only qf  0.979 | 0.981 | 0.957 |  48 (gt 46) | 0.981
+  met10  only qb  0.959 | 0.961 | 0.837 |  41 (gt 46) | 0.938
+  met10  only h   0.622 | 0.629 | 0.140 |  17 (gt 46) | 0.670
+----

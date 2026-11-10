@@ -1,0 +1,64 @@
+OUTPUT of your block (ran 579 s). Forward passes used: 1 of 25. Replies left: 38.
+----
+dev       half  0 DFL spellF1 0.731 macroF1 0.922  possessions 121 (true 134)
+dev       half  1 DFL spellF1 0.748 macroF1 0.927  possessions 111 (true 134)
+dev       half  2 DFL spellF1 0.734 macroF1 0.902  possessions 126 (true 164)
+dev       half  3 DFL spellF1 0.697 macroF1 0.889  possessions 139 (true 164)
+dev       half  4 SC  spellF1 0.921 macroF1 0.972  possessions 112 (true 123)
+dev       half  5 SC  spellF1 0.911 macroF1 0.973  possessions 128 (true 127)
+dev       half  6 SC  spellF1 0.916 macroF1 0.980  possessions 114 (true 120)
+dev       half  7 SC  spellF1 0.922 macroF1 0.977  possessions 109 (true 117)
+dev       half  8 SC  spellF1 0.842 macroF1 0.962  possessions 122 (true 142)
+dev       half  9 SC  spellF1 0.913 macroF1 0.973  possessions 127 (true 136)
+dev       half 10 MET spellF1 0.990 macroF1 0.996  possessions 148 (true 146)
+dev       half 11 MET spellF1 0.975 macroF1 0.995  possessions 122 (true 123)
+DFL
+    halves 4
+    spell_f1 0.7274
+    macro_f1 0.9101
+    n_gt_spells 596
+    n_pred_spells 497
+    gt_mean_spell_s 11.7
+    pred_mean_spell_s 13.66
+    frame_acc_decoded 0.9186
+    frame_acc_argmax 0.9182
+    confusion_rows_truth_cols_pred [[67807, 6585, 3538], [6534, 82822, 3452], [1547, 2121, 117528]]
+    per_class {'H': {'precision': 0.8935, 'recall': 0.8701, 'f1': 0.8817}, 'A': {'precision': 0.9049, 'recall': 0.8924, 'f1': 0.8986}, 'D': {'precision': 0.9439, 'recall': 0.9697, 'f1': 0.9566}}
+SC
+    halves 6
+    spell_f1 0.9043
+    macro_f1 0.9729
+    n_gt_spells 765
+    n_pred_spells 712
+    gt_mean_spell_s 12.42
+    pred_mean_spell_s 13.28
+    frame_acc_decoded 0.9762
+    frame_acc_argmax 0.9769
+    confusion_rows_truth_cols_pred [[111671, 1987, 1391], [2641, 116338, 1963], [1646, 1071, 210877]]
+    per_class {'H': {'precision': 0.963, 'recall': 0.9706, 'f1': 0.9668}, 'A': {'precision': 0.9744, 'recall': 0.9619, 'f1': 0.9681}, 'D': {'precision': 0.9843, 'recall': 0.9873, 'f1': 0.9858}}
+MET
+    halves 2
+    spell_f1 0.9826
+    macro_f1 0.9955
+    n_gt_spells 269
+    n_pred_spells 270
+    gt_mean_spell_s 13.75
+    pred_mean_spell_s 13.74
+    frame_acc_decoded 0.9957
+    frame_acc_argmax 0.9958
+    confusion_rows_truth_cols_pred [[48171, 294, 19], [220, 42291, 14], [50, 22, 53925]]
+    per_class {'H': {'precision': 0.9944, 'recall': 0.9935, 'f1': 0.994}, 'A': {'precision': 0.9926, 'recall': 0.9945, 'f1': 0.9935}, 'D': {'precision': 0.9994, 'recall': 0.9987, 'f1': 0.999}}
+ALL
+    halves 12
+    spell_f1 0.8584
+    macro_f1 0.9558
+    n_gt_spells 1630
+    n_pred_spells 1479
+    gt_mean_spell_s 12.4
+    pred_mean_spell_s 13.49
+    frame_acc_decoded 0.9604
+    frame_acc_argmax 0.9605
+    confusion_rows_truth_cols_pred [[227649, 8866, 4948], [9395, 241451, 5429], [3243, 3214, 382330]]
+    per_class {'H': {'precision': 0.9474, 'recall': 0.9428, 'f1': 0.9451}, 'A': {'precision': 0.9524, 'recall': 0.9422, 'f1': 0.9472}, 'D': {'precision': 0.9736, 'recall': 0.9834, 'f1': 0.9785}}
+24
+----

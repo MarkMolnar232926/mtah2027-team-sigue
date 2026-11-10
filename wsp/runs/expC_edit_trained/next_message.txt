@@ -1,0 +1,33 @@
+OUTPUT of your block (ran 1 s). Forward passes used: 14 of 25. Replies left: 25.
+----
+DFL 4 views
+  restart D->live  n= 90 found  75 | offset median +0.00s mean +0.08s IQR [-0.06, +0.08] | frac late>0.4s 0.15 early<-0.4s 0.15
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-6.1 -4.6 -3.  -2.2 -1.8  1.2  2.1  2.2  3.1  5.2  6.9]
+      first frame where median margin > 0: +0.00s ; frac of events with margin>0 at t=0: 0.71, at +0.5s: 0.87, at -0.5s: 0.20
+  stop live->D     n= 92 found  70 | offset median +0.00s mean -0.05s IQR [-0.16, +0.20] | frac late>0.4s 0.17 early<-0.4s 0.16
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-8.7 -6.3 -3.8 -2.1 -1.6 -0.   0.7  1.   1.8  2.7  4.3]
+      first frame where median margin > 0: +0.04s ; frac of events with margin>0 at t=0: 0.49, at +0.5s: 0.75, at -0.5s: 0.14
+  turnover         n=177 found 115 | offset median +0.04s mean +0.04s IQR [-0.28, +0.46] | frac late>0.4s 0.30 early<-0.4s 0.24
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-2.6 -2.2 -1.4 -1.  -0.6 -0.1  0.4  0.6  0.8  1.3  1.9]
+      first frame where median margin > 0: +0.04s ; frac of events with margin>0 at t=0: 0.48, at +0.5s: 0.67, at -0.5s: 0.30
+SC 4 views
+  restart D->live  n= 73 found  70 | offset median +0.00s mean -0.01s IQR [-0.16, +0.08] | frac late>0.4s 0.10 early<-0.4s 0.11
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-5.9 -4.7 -3.7 -2.3 -1.4  0.5  2.   3.1  4.3  4.6  6.2]
+      first frame where median margin > 0: +0.00s ; frac of events with margin>0 at t=0: 0.63, at +0.5s: 0.90, at -0.5s: 0.08
+  stop live->D     n= 72 found  65 | offset median +0.00s mean +0.03s IQR [-0.08, +0.08] | frac late>0.4s 0.09 early<-0.4s 0.06
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-6.  -3.7 -2.1 -1.4 -0.7  0.2  1.   1.8  2.5  3.9  6. ]
+      first frame where median margin > 0: -0.04s ; frac of events with margin>0 at t=0: 0.60, at +0.5s: 0.89, at -0.5s: 0.08
+  turnover         n=109 found  98 | offset median +0.00s mean +0.06s IQR [-0.07, +0.11] | frac late>0.4s 0.13 early<-0.4s 0.08
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-5.3 -4.  -3.1 -2.3 -1.5  0.1  1.7  2.4  3.2  4.   5.1]
+      first frame where median margin > 0: +0.00s ; frac of events with margin>0 at t=0: 0.54, at +0.5s: 0.86, at -0.5s: 0.09
+SC swapped views only
+  restart D->live  n= 73 found  70 | offset median +0.00s mean +0.00s IQR [-0.11, +0.11] | frac late>0.4s 0.09 early<-0.4s 0.13
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-6.1 -4.9 -3.5 -2.5 -1.5  0.6  2.1  3.6  4.7  4.9  6.1]
+      first frame where median margin > 0: +0.00s ; frac of events with margin>0 at t=0: 0.62, at +0.5s: 0.92, at -0.5s: 0.11
+  stop live->D     n= 72 found  64 | offset median -0.04s mean -0.01s IQR [-0.16, +0.16] | frac late>0.4s 0.09 early<-0.4s 0.09
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-6.1 -4.1 -2.8 -1.8 -0.8  0.4  1.2  1.8  2.8  4.7  6.5]
+      first frame where median margin > 0: -0.04s ; frac of events with margin>0 at t=0: 0.57, at +0.5s: 0.85, at -0.5s: 0.10
+  turnover         n=109 found  99 | offset median +0.00s mean +0.05s IQR [-0.08, +0.12] | frac late>0.4s 0.14 early<-0.4s 0.09
+      median margin(new-old) at t=-2,-1,-.5,-.24,-.12,0,+.12,+.24,+.5,+1,+2 s: [-6.1 -4.4 -3.3 -2.7 -1.4  0.2  1.9  2.9  3.9  4.8  5.9]
+      first frame where median margin > 0: +0.00s ; frac of events with margin>0 at t=0: 0.53, at +0.5s: 0.83, at -0.5s: 0.09
+----

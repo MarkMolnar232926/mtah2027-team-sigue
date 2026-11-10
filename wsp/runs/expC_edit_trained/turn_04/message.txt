@@ -1,0 +1,69 @@
+OUTPUT of your block (ran 1 s). Forward passes used: 5 of 25. Replies left: 36.
+----
+65 gt runs; flagged 19
+   0.0s D  36.5s pred H0.00 A0.00 D1.00  margin mean +12.0 min  +0.5  seen 0.24
+  36.5s A   3.2s pred H0.00 A0.96 D0.04  margin mean  +2.5 min  -0.3  seen 0.00
+  39.7s D   8.8s pred H0.00 A0.05 D0.95  margin mean  +6.9 min  -1.5  seen 0.30
+  48.5s A   5.4s pred H0.00 A1.00 D0.00  margin mean  +6.4 min  +0.9  seen 1.00
+  53.9s D  23.7s pred H0.00 A0.01 D0.99  margin mean  +7.6 min  -1.2  seen 0.92
+  77.6s A   1.4s pred H0.00 A1.00 D0.00  margin mean  +6.5 min  +0.0  seen 1.00
+  79.0s H  11.6s pred H0.97 A0.03 D0.00  margin mean  +6.3 min  -0.6  seen 1.00
+  90.6s D   3.6s pred H0.10 A0.00 D0.90  margin mean  +3.2 min  -0.9  seen 0.64
+  94.2s H   6.0s pred H1.00 A0.00 D0.00  margin mean  +5.2 min  +0.9  seen 0.34
+ 100.2s D  15.1s pred H0.04 A0.00 D0.96  margin mean  +9.8 min  -0.9  seen 0.36
+ 115.3s H   1.8s pred H0.13 A0.00 D0.87  margin mean  -1.4 min  -3.4  seen 0.00  <<< MISSED
+ 117.2s A   3.2s pred H0.90 A0.00 D0.10  margin mean  -2.1 min  -3.3  seen 0.00  <<< MISSED
+ 120.3s D   4.7s pred H0.00 A0.00 D1.00  margin mean  +1.5 min  +0.4  seen 0.00
+ 125.0s H  31.6s pred H0.99 A0.01 D0.01  margin mean  +6.4 min  -2.1  seen 0.62
+ 156.6s A   6.9s pred H0.00 A1.00 D0.00  margin mean  +4.9 min  +2.3  seen 0.00
+ 163.5s D  35.6s pred H0.00 A0.02 D0.98  margin mean  +9.2 min  -2.1  seen 0.36
+ 199.2s A   1.8s pred H0.00 A0.43 D0.57  margin mean  -1.8 min  -5.9  seen 0.00  <<< MISSED
+ 201.0s H   6.2s pred H0.90 A0.10 D0.00  margin mean  +3.6 min  -1.8  seen 0.73
+ 207.2s A   2.1s pred H1.00 A0.00 D0.00  margin mean  -1.6 min  -2.8  seen 1.00  <<< MISSED
+ 209.3s H   4.2s pred H0.73 A0.27 D0.00  margin mean  +1.0 min  -1.9  seen 1.00  < partial
+ 213.5s A  11.1s pred H0.00 A1.00 D0.00  margin mean  +7.0 min  +0.4  seen 1.00
+ 224.6s H   7.9s pred H0.67 A0.33 D0.00  margin mean  +1.2 min  -1.4  seen 0.50  < partial
+ 232.5s A  12.9s pred H0.00 A1.00 D0.00  margin mean  +4.2 min  +1.3  seen 0.46
+ 245.4s H   5.1s pred H0.00 A1.00 D0.00  margin mean  -0.8 min  -1.9  seen 0.98  <<< MISSED
+ 250.5s D  75.0s pred H0.00 A0.00 D1.00  margin mean +10.5 min  +0.1  seen 0.18
+ 325.5s A   1.1s pred H0.00 A0.00 D1.00  margin mean  -0.8 min  -2.1  seen 0.00  <<< MISSED
+ 326.6s H   6.3s pred H0.89 A0.00 D0.11  margin mean  +1.3 min  -0.7  seen 0.00
+ 332.9s D  22.0s pred H0.00 A0.00 D1.00  margin mean +10.8 min  +0.4  seen 0.44
+ 354.9s H   5.6s pred H1.00 A0.00 D0.00  margin mean  +4.0 min  -0.3  seen 1.00
+ 360.6s A   2.7s pred H0.96 A0.04 D0.00  margin mean  -0.5 min  -0.9  seen 0.75  <<< MISSED
+ 363.2s H   2.2s pred H0.00 A1.00 D0.00  margin mean  -0.7 min  -0.9  seen 0.33  <<< MISSED
+ 365.4s A  29.4s pred H0.04 A0.96 D0.00  margin mean  +5.2 min  -1.4  seen 0.43
+ 394.8s H  17.0s pred H1.00 A0.00 D0.00  margin mean  +5.8 min  +1.4  seen 0.28
+ 411.8s A   2.2s pred H1.00 A0.00 D0.00  margin mean  -6.1 min  -6.3  seen 0.00  <<< MISSED
+ 414.0s D  53.9s pred H0.04 A0.01 D0.95  margin mean  +1.0 min  -1.6  seen 0.00
+ 467.9s A   3.3s pred H0.00 A1.00 D0.00  margin mean  +3.4 min  +0.1  seen 0.00
+ 471.2s H  13.9s pred H0.77 A0.05 D0.18  margin mean  +0.9 min  -2.9  seen 0.00  < partial
+ 485.1s D  30.2s pred H0.00 A0.00 D1.00  margin mean  +9.5 min  +0.3  seen 0.19
+ 515.2s H   3.8s pred H0.98 A0.00 D0.02  margin mean  +1.7 min  -0.2  seen 0.00
+ 519.0s D  11.5s pred H0.16 A0.84 D0.00  margin mean  -3.4 min  -5.2  seen 0.00  <<< MISSED
+ 530.5s A  14.8s pred H0.00 A1.00 D0.00  margin mean  +6.3 min  +1.2  seen 0.00
+ 545.4s D   9.5s pred H0.12 A0.09 D0.79  margin mean  +1.1 min  -3.3  seen 0.00  < partial
+ 554.8s H  21.8s pred H1.00 A0.00 D0.00  margin mean +10.8 min  +2.4  seen 0.63
+ 576.7s D  20.0s pred H0.00 A0.00 D1.00  margin mean  +8.1 min  -1.0  seen 0.48
+ 596.7s A   1.9s pred H0.00 A0.00 D1.00  margin mean  -5.5 min  -6.9  seen 0.00  <<< MISSED
+ 598.6s D   7.2s pred H0.00 A0.00 D1.00  margin mean  +3.5 min  +2.6  seen 0.00
+ 605.8s A  12.4s pred H0.05 A0.85 D0.10  margin mean  +1.9 min  -2.5  seen 0.27
+ 618.1s H  13.7s pred H1.00 A0.00 D0.00  margin mean  +2.8 min  +0.7  seen 0.00
+ 631.8s A   7.8s pred H0.07 A0.93 D0.00  margin mean  +2.6 min  -3.3  seen 0.00
+ 639.7s H   6.0s pred H0.00 A1.00 D0.00  margin mean  -2.2 min  -4.1  seen 0.89  <<< MISSED
+ 645.6s A   6.0s pred H0.00 A1.00 D0.00  margin mean  +6.4 min  +0.6  seen 1.00
+ 651.7s D  18.7s pred H0.00 A0.00 D1.00  margin mean +10.4 min  -0.4  seen 0.46
+ 670.4s H   8.2s pred H0.69 A0.31 D0.00  margin mean  +5.2 min  -3.3  seen 1.00  < partial
+ 678.6s A   3.3s pred H0.00 A0.99 D0.01  margin mean  +6.9 min  -2.1  seen 1.00
+ 681.9s D  25.6s pred H0.00 A0.00 D1.00  margin mean +11.5 min  -0.4  seen 0.72
+ 707.5s H  13.8s pred H1.00 A0.00 D0.00  margin mean  +5.0 min  +0.5  seen 0.18
+ 721.2s A   8.5s pred H1.00 A0.00 D0.00  margin mean  -1.2 min  -2.1  seen 0.02  <<< MISSED
+ 729.7s H  20.0s pred H0.99 A0.01 D0.00  margin mean  +6.2 min  -3.2  seen 0.84
+ 749.8s A   5.7s pred H0.01 A0.99 D0.00  margin mean  +6.4 min  -1.9  seen 1.00
+ 755.4s H  10.2s pred H1.00 A0.00 D0.00  margin mean  +8.3 min  -1.0  seen 1.00
+ 765.7s D  13.1s pred H0.00 A0.00 D1.00  margin mean +12.8 min  +1.7  seen 1.00
+ 778.8s H   6.2s pred H1.00 A0.00 D0.00  margin mean  +7.9 min  +1.5  seen 1.00
+ 785.0s D 119.0s pred H0.01 A0.00 D0.99  margin mean +11.8 min  -7.6  seen 0.52
+ 904.0s H   0.6s pred H0.00 A0.00 D1.00  margin mean  +0.2 min  -0.3  seen 0.00  <<< MISSED
+ 904.6s D  55.4s pred H0.00 A0.00 D1.00  margin mean  +9.6 min  -0.6  seen 0.00
+----

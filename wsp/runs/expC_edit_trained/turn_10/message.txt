@@ -1,0 +1,23 @@
+OUTPUT of your block (ran 1 s). Forward passes used: 5 of 25. Replies left: 30.
+----
+dfl0 matched@0.3: 39 of 51 gt, 44 pred | of those IoU>=.5: 29, >=.7: 21, >=.9: 9
+    end by turnover        n= 27  mean +0.50s  median +0.40s  |err|>1s:  9  late>1s:  7 early>1s:  2   q10 -0.78 q90 +2.06
+    end into D             n= 11  mean +0.25s  median +0.00s  |err|>1s:  2  late>1s:  2 early>1s:  0   q10 -0.12 q90 +1.04
+    start after D          n= 13  mean -0.26s  median +0.00s  |err|>1s:  3  late>1s:  1 early>1s:  2   q10 -2.01 q90 +0.70
+    start after turnover   n= 26  mean +0.93s  median +0.28s  |err|>1s: 11  late>1s:  6 early>1s:  5   q10 -6.26 q90 +6.88
+dfl2 matched@0.3: 30 of 45 gt, 31 pred | of those IoU>=.5: 26, >=.7: 19, >=.9: 8
+    end by turnover        n= 17  mean +1.43s  median +0.36s  |err|>1s:  8  late>1s:  5 early>1s:  3   q10 -1.72 q90 +5.13
+    end into D             n= 13  mean +0.24s  median +0.08s  |err|>1s:  3  late>1s:  2 early>1s:  1   q10 -0.49 q90 +1.58
+    start after D          n= 14  mean -0.63s  median +0.00s  |err|>1s:  4  late>1s:  2 early>1s:  2   q10 -0.92 q90 +0.79
+    start after turnover   n= 16  mean -1.92s  median -0.20s  |err|>1s:  6  late>1s:  0 early>1s:  6   q10 -2.56 q90 +0.60
+sc8 matched@0.3: 33 of 36 gt, 33 pred | of those IoU>=.5: 33, >=.7: 33, >=.9: 24
+    end by turnover        n= 21  mean +0.18s  median +0.00s  |err|>1s:  1  late>1s:  1 early>1s:  0   q10 -0.20 q90 +0.80
+    end into D             n= 12  mean +0.08s  median +0.02s  |err|>1s:  1  late>1s:  1 early>1s:  0   q10 -0.08 q90 +0.26
+    start after D          n= 12  mean -0.06s  median -0.02s  |err|>1s:  0  late>1s:  0 early>1s:  0   q10 -0.35 q90 +0.34
+    start after turnover   n= 20  mean +0.06s  median +0.00s  |err|>1s:  0  late>1s:  0 early>1s:  0   q10 -0.26 q90 +0.73
+met10 matched@0.3: 46 of 46 gt, 48 pred | of those IoU>=.5: 46, >=.7: 45, >=.9: 45
+    end by turnover        n= 29  mean +0.04s  median +0.04s  |err|>1s:  0  late>1s:  0 early>1s:  0   q10 -0.05 q90 +0.12
+    end into D             n= 16  mean -0.16s  median +0.00s  |err|>1s:  1  late>1s:  0 early>1s:  1   q10 -0.04 q90 +0.04
+    start after D          n= 17  mean -0.01s  median +0.00s  |err|>1s:  0  late>1s:  0 early>1s:  0   q10 -0.04 q90 +0.00
+    start after turnover   n= 29  mean +0.04s  median +0.04s  |err|>1s:  0  late>1s:  0 early>1s:  0   q10 -0.05 q90 +0.12
+----
