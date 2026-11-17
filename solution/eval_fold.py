@@ -2,7 +2,7 @@
 SkillCorner matches 15-19 (real automatic tracking) and Metrica sample game 3 (Metrica tracking,
 EPTS format; match index 202). Models must not have trained on these.
 
-    python solution/eval_fold.py --models models/expB_base.pt [--tta]
+    python solution/eval_fold.py --models models/final_met_s0.pt [--tta]
 """
 import argparse
 import glob

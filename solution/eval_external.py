@@ -1,6 +1,6 @@
 """Score trained models on SkillCorner matches (real automatic tracking, external data).
 
-    python solution/eval_external.py --models models/final_s0.pt [--matches 0-19]
+    python solution/eval_external.py --models models/final_met_s0.pt [--matches 0-19]
 """
 import argparse
 import glob

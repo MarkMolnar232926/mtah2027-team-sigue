@@ -1,6 +1,6 @@
 """Label the competition match with the externally trained model(s).
 
-    python solution/predict.py --models models/final_bw3_s0.pt ... --tta --out submission/Sigue.csv
+    python solution/predict.py --models models/final_met_s0.pt ... --tta --out submission/Sigue.csv
 
 Inputs: the tactical ATD only. Decoder penalties come from models/decoder.json, which was chosen
 by cross-validation on DFL matches -- never on the provided game. --tta averages the
