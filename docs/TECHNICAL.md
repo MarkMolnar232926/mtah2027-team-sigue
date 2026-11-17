@@ -1,7 +1,5 @@
 # Team Sigue — Frame-level ball possession from automatic tracking
 
-*More than a Hack 2027, Phase 1. Technical document.*
-
 ## 1. Summary
 
 We label every frame `H`, `A` or `D` from the **automatic tactical tracking (ATD) alone**, with a
